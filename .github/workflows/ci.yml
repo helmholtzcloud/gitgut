@@ -50,10 +50,13 @@ jobs:
           # Cross-platform build
           mkdir -p ./dist/artifacts
 
+          cp ./cmd/LICENSE ./dist
+          cp ./cmd/NOTICE ./dist
+
           for architecture in amd64 arm64 riscv64
           do
             CGO_ENABLED=0 GOOS=linux GOARCH=$architecture go build -o ./dist/gitgut main.go
-            tar czf ./dist/artifacts/gitgut_linux_$architecture.tar.gz -C ./dist gitgut
+            tar czf ./dist/artifacts/gitgut_linux_$architecture.tar.gz -C ./dist gitgut LICENSE NOTICE
           done
 
       - name: Upload Artifact Bundle
