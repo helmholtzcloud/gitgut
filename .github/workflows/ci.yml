@@ -35,7 +35,7 @@ jobs:
           sed -rie "s/^\s+Reference:(.*)$/\\tReference: \"$REPLACED_REF\",/m" cmd/version.go
           sed -rie "s/^\s+BuiltAt:(.*)$/\\tBuiltAt: \"$(date --iso-8601=seconds)\",/m" cmd/version.go
           gofmt -w cmd/version.go
-          cat version.go
+          cat cmd/version.go
 
       - name: Check and Bundle Licenses
         run: |
