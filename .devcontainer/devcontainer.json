@@ -1,0 +1,14 @@
+{
+	"name": "gitgut",
+	"image": "mcr.microsoft.com/devcontainers/go:2-1.27-trixie",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.go"
+			],
+			"settings": {
+				"go.lintTool": "golangci-lint-v2"
+			}
+		}
+	}
+}
