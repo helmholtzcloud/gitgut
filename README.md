@@ -3,7 +3,7 @@
 > [!CAUTION]
 > This software is at an experimental stage. No guarantees, e.g. it may burn a lot of tokens. Use at your own risk.
 
-Welcome to GitGut, a customizable LLM assistant for code review! It works like this: point the CLI tool at a MR/PR on your forge, then it is going execute an LLM-based review workflow for you and report its findings in a comment.
+Welcome to GitGut, a customizable LLM assistant for code review! It works like this: point the CLI tool at a MR/PR on your forge, then it is going execute an LLM-based review workflow for you and report its findings in a comment it updates on each run.
 
 The workflow is made up of a set of blocks provided by GitGut which you customize to fit your team's needs using custom workflow layout, models, model parameters, prompts etc. Currently, GitGut is not a 'traditional' agent, e.g. the 'agentic' validation block only has a single tool and that is `read_file` which is read from an im-memory copy of your repo. This may be change in the future.
 
