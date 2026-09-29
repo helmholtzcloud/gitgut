@@ -18,7 +18,7 @@ GitGut is designed as a tool augmenting human code review, not for replacing it.
 *There are provisions in place to support other forges and inference backends, please open an issue in that case.*
 
 ## Quickstart
-- Fetch the latest release from the release page or the latest docker container
+- Fetch the latest release from the release page or clone the repo and build the container (official container is in the works)
 - Build a short single-node review workflow or copy the example workflow below (which may use quite a few tokens)
 - Update the config (forge + inference credentials) and dry-run your review, iterate on the results a few times and once you're happy, you can deploy it
 - Use the `review` command for reviews and the `licenses` command for license information
@@ -30,6 +30,7 @@ GitGut is designed as a tool augmenting human code review, not for replacing it.
     - Repos with a lot of files which fill the context with the file tree alone
     - Sometimes agentic verification gets stuck in a loop (depends on model, prompt etc.) leading to excessive token consumption
 - There is a hardcoded limit of 10 million input tokens per run (measured after a node finishes, so the actual number may be higher). This is a stopgap for runaway jobs and will be customizable in the future.
+- There is a default timeout on many actions to prevent stuck tasks.
 
 ## Building your own Workflow
 The answer to what part of code review can be supported by LLMs is probably going to slightly differ for each team. Therefore, you can customize the workflow GitGut is executing to fit it to your needs. It is recommended to pick a few typical benchmark MRs and iteratively build your workflow with `--dry-run` locally first! Later on, you're free to keep running in local mode or deploy it as part of your CI pipeline.
