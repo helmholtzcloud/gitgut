@@ -1,0 +1,64 @@
+name: Release Tag
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+          check-latest: true
+
+      - name: Get Go Dependencies
+        run: |
+          # Install dependencies
+          go get .
+
+      - name: Update Version Info
+        run: |
+          export REPLACED_REF=$(echo $GITHUB_REF | sed -r 's/\//\\\//g')
+          export NONPREFIXED_VERSION="${GITHUB_REF_NAME:1}"
+
+          # Update embedded build info
+          sed -rie "s/^\s+Version:(.*)$/\tVersion: \"$NONPREFIXED_VERSION\",/m" ./cmd/version.go
+          sed -rie "s/^\s+Revision:(.*)$/\\tRevision: \"$GITHUB_SHA\",/m" ./cmd/version.go
+          sed -rie "s/^\s+Reference:(.*)$/\\tReference: \"$REPLACED_REF\",/m" ./cmd/version.go
+          sed -rie "s/^\s+BuiltAt:(.*)$/\\tBuiltAt: \"$(date --iso-8601=seconds)\",/m" ./cmd/version.go
+          gofmt -w ./cmd/version.go
+          cat ./cmd/version.go
+
+      - name: Check and Bundle Licenses
+        run: |
+          # Bundle licenses
+          curl -L -o "/usr/local/bin/go-licence-detector" $(curl -L https://api.github.com/repos/elastic/go-licence-detector/releases/latest | jq -r '.assets.[] | select ( .name == "go-licence-detector" ) | .browser_download_url')
+          chmod +x /usr/local/bin/go-licence-detector
+          go list -m -json all | go-licence-detector -includeIndirect -rules=./license-rules.json -noticeTemplate=NOTICE.tpl -noticeOut=./cmd/gitgut/NOTICE
+          cp LICENSE ./cmd/gitgut
+
+      - name: Perform Cross-Platform Binary Build
+        run: |
+          # Cross-platform build
+          mkdir -p ./dist/artifacts
+
+          cp ./cmd/LICENSE ./dist
+          cp ./cmd/NOTICE ./dist
+
+          for architecture in amd64 arm64 riscv64
+          do
+            CGO_ENABLED=0 GOOS=linux GOARCH=$architecture go build -o ./dist/gitgut ./cmd/gitgut/
+            tar czf ./dist/artifacts/gitgut_linux_$architecture.tar.gz -C ./dist gitgut LICENSE NOTICE
+          done
+
+      - name: Upload Artifact Bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: gitgut-artifacts
+          if-no-files-found: error
+          path: dist/artifacts/*.tar.gz
