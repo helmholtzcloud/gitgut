@@ -52,7 +52,7 @@ jobs:
 
           for architecture in amd64 arm64 riscv64
           do
-            CGO_ENABLED=0 GOOS=linux GOARCH=$architecture go build -o ./dist/gitgut ./cmd/gitgut/
+            CGO_ENABLED=0 GOOS=linux GOARCH=$architecture go build -o ./dist/gitgut main.go
             tar czf ./dist/artifacts/gitgut_linux_$architecture.tar.gz -C ./dist gitgut
           done
 
