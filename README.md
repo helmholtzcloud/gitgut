@@ -55,6 +55,7 @@ Available Commands:
   help        Help about any command
   licenses    Display license information of this project.
   review      Run a code review and post/update the comment.
+  version     Display version information of this build
 
 Flags:
   -h, --help   help for gitgut
