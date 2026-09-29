@@ -43,7 +43,7 @@ jobs:
           curl -L -o "/usr/local/bin/go-licence-detector" $(curl -L https://api.github.com/repos/elastic/go-licence-detector/releases/latest | jq -r '.assets.[] | select ( .name == "go-licence-detector" ) | .browser_download_url')
           chmod +x /usr/local/bin/go-licence-detector
           go list -m -json all | go-licence-detector -includeIndirect -rules=./license-rules.json -noticeTemplate=NOTICE.tpl -noticeOut=./cmd/NOTICE
-          cp LICENSE ./cmd/gitgut
+          cp LICENSE ./cmd
 
       - name: Perform Cross-Platform Binary Build
         run: |
