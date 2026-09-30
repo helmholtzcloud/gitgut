@@ -268,7 +268,7 @@ This is an example workflow which aims to provide general findings on the code.
     "forge": {
         "client": "gitlab",
         "host": "my.gitlab.local",
-        "access_token": "GITLAB_PAT",
+        "access_token": "GITGUT_GITLAB_PAT",
         "opted_in_user_ids": [1234]
     },
     "providers": {
@@ -358,7 +358,7 @@ Please be aware this may use a few million tokens per review if your provider do
     "forge": {
         "client": "gitlab",
         "host": "my.gitlab.local",
-        "access_token": "GITLAB_PAT",
+        "access_token": "GITGUT_GITLAB_PAT",
         "opted_in_user_ids": [1234]
     },
     "providers": {
