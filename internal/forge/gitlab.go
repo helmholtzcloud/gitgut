@@ -12,22 +12,36 @@ type GitLabConfig struct {
 	Host           string   `mapstructure:"host"`
 	AccessToken    string   `mapstructure:"access_token"`
 	OptedInUserIDs *[]int64 `mapstructure:"opted_in_user_ids"`
+	// InternalNotes controls whether review comments are posted as GitLab
+	// "internal notes" (visible only to project members) or as regular,
+	// externally-visible notes. Defaults to true (internal) to preserve
+	// existing behavior for anyone upgrading without setting this.
+	InternalNotes *bool `mapstructure:"internal_notes"`
 }
 
 type GitLab struct {
 	client         *gitlab.Client
 	optedInUserIDs *[]int64
+	internalNotes  bool
 }
 
-func NewGitLabClient(host string, token string, optedInUserIDs *[]int64) (*GitLab, error) {
+func NewGitLabClient(host string, token string, optedInUserIDs *[]int64, internalNotes *bool) (*GitLab, error) {
 	client, err := gitlab.NewClient(token, gitlab.WithBaseURL(fmt.Sprintf("https://%s/api/v4", host)))
 	if err != nil {
 		return nil, err
 	}
 
+	// Default to internal notes when unset, matching the previous
+	// hardcoded behavior.
+	resolvedInternalNotes := true
+	if internalNotes != nil {
+		resolvedInternalNotes = *internalNotes
+	}
+
 	return &GitLab{
 		client:         client,
 		optedInUserIDs: optedInUserIDs,
+		internalNotes:  resolvedInternalNotes,
 	}, nil
 }
 
@@ -119,10 +133,10 @@ func (c *GitLab) CreateOrUpdateReviewComment(projectID int64, changeID int64, co
 			Body: &comment,
 		})
 	} else {
-		t := true
+		internal := c.internalNotes
 		_, _, err = c.client.Notes.CreateMergeRequestNote(projectID, changeID, &gitlab.CreateMergeRequestNoteOptions{
 			Body:     &comment,
-			Internal: &t,
+			Internal: &internal,
 		})
 	}
 
