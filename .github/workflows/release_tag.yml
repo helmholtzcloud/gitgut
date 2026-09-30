@@ -39,8 +39,8 @@ jobs:
           # Bundle licenses
           curl -L -o "/usr/local/bin/go-licence-detector" $(curl -L https://api.github.com/repos/elastic/go-licence-detector/releases/latest | jq -r '.assets.[] | select ( .name == "go-licence-detector" ) | .browser_download_url')
           chmod +x /usr/local/bin/go-licence-detector
-          go list -m -json all | go-licence-detector -includeIndirect -rules=./license-rules.json -noticeTemplate=NOTICE.tpl -noticeOut=./cmd/gitgut/NOTICE
-          cp LICENSE ./cmd/gitgut
+          go list -m -json all | go-licence-detector -includeIndirect -rules=./license-rules.json -noticeTemplate=NOTICE.tpl -noticeOut=./cmd/NOTICE
+          cp LICENSE ./cmd
 
       - name: Perform Cross-Platform Binary Build
         run: |
@@ -52,7 +52,7 @@ jobs:
 
           for architecture in amd64 arm64 riscv64
           do
-            CGO_ENABLED=0 GOOS=linux GOARCH=$architecture go build -o ./dist/gitgut ./cmd/gitgut/
+            CGO_ENABLED=0 GOOS=linux GOARCH=$architecture go build -o ./dist/gitgut .
             tar czf ./dist/artifacts/gitgut_linux_$architecture.tar.gz -C ./dist gitgut LICENSE NOTICE
           done
 
