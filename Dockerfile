@@ -13,6 +13,8 @@ FROM scratch
 
 COPY --from=build /nobody /etc/passwd
 COPY --from=build --chown=65534:65534 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=build /build/cmd/LICENSE /LICENSE
+COPY --from=build /build/cmd/NOTICE /NOTICE
 COPY --from=build /build/gitgut /bin/gitgut
 
 USER 65534
