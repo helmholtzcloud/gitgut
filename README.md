@@ -1,7 +1,7 @@
 # GitGut
 
 > [!CAUTION]
-> This software is at an experimental stage. No guarantees, e.g. it may burn a lot of tokens. Use at your own risk.
+> Like many projects in the LLM space, this software is at an experimental stage. No guarantees, e.g. it may burn a lot of tokens. Use at your own risk.
 
 Welcome to GitGut, a customizable LLM assistant for code review! It works like this: point the CLI tool at a MR/PR on your forge, then it is going execute an LLM-based review workflow for you and report its findings in a comment it updates on each run.
 
