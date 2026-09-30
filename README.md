@@ -18,10 +18,15 @@ GitGut is designed as a tool augmenting human code review, not for replacing it.
 *There are provisions in place to support other forges and inference backends, please open an issue in that case.*
 
 ## Quickstart
-- Fetch the latest release from the release page or clone the repo and build the container (official container is in the works)
-- Build a short single-node review workflow or copy the example workflow below (which may use quite a few tokens)
-- Update the config (forge + inference credentials) and dry-run your review, iterate on the results a few times and once you're happy, you can deploy it
-- Use the `review` command for reviews and the `licenses` command for license information
+- Grab a `gitgut.json` from the section below: a short single-node review workflow or copy the larger example workflow (which may use quite a few tokens)
+- Update the config (forge + inference credentials + models you want to use)
+- Dry-run it in a container:
+```
+podman run --rm -it -v ./gitgut.json:/gitgut.json:ro ghcr.io/helmholtzcloud/gitgut:latest gitgut review 123 456 --dry-run
+```
+- Iterate on the results a few times and once you're happy, you can deploy it in CI etc.
+
+Use the `help` command to learn about more options.
 
 ## Limitations
 - Extremely large MRs which are larger than the context may cause touble (probably too large for human review anyway)
