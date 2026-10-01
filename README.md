@@ -83,7 +83,7 @@ You need a credential which can download the code, read merge requests and post 
 
 You can provide a list of user IDs who have opted into reviews on their MR. If you want to disable this feature, simply set the attribute to `null`.
 
-Review comments are posted as internal notes (visible only to project members) by default. Set `internal_notes` to `false` if you want them visible to everyone with access to the merge request, such as external collaborators.
+Review comments are posted as regular, externally-visible notes by default, so anyone with access to the merge request can see them. Set `internal_notes` to `true` if you want them restricted to project members only.
 
 ```json
 "forge": {
@@ -93,7 +93,7 @@ Review comments are posted as internal notes (visible only to project members) b
     "opted_in_user_ids": [
         1234
     ],
-    "internal_notes": true
+    "internal_notes": false
 }
 ```
 
