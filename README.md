@@ -83,6 +83,8 @@ You need a credential which can download the code, read merge requests and post 
 
 You can provide a list of user IDs who have opted into reviews on their MR. If you want to disable this feature, simply set the attribute to `null`.
 
+Review comments are posted as regular, externally-visible notes by default, so anyone with access to the merge request can see them. Set `post_as_internal_note` to `true` if you want them restricted to project members only.
+
 ```json
 "forge": {
     "client": "gitlab",
@@ -90,7 +92,8 @@ You can provide a list of user IDs who have opted into reviews on their MR. If y
     "access_token": "GITGUT_GITLAB_PAT",
     "opted_in_user_ids": [
         1234
-    ]
+    ],
+    "post_as_internal_note": false
 }
 ```
 

@@ -12,22 +12,39 @@ type GitLabConfig struct {
 	Host           string   `mapstructure:"host"`
 	AccessToken    string   `mapstructure:"access_token"`
 	OptedInUserIDs *[]int64 `mapstructure:"opted_in_user_ids"`
+	// PostAsInternalNote controls whether review comments are posted as
+	// GitLab "internal notes" (visible only to project members) or as
+	// regular, externally-visible notes. Defaults to false
+	// (externally-visible); posting as internal is the special case and
+	// must be opted into.
+	PostAsInternalNote *bool `mapstructure:"post_as_internal_note"`
 }
 
 type GitLab struct {
-	client         *gitlab.Client
-	optedInUserIDs *[]int64
+	client             *gitlab.Client
+	optedInUserIDs     *[]int64
+	postAsInternalNote bool
 }
 
-func NewGitLabClient(host string, token string, optedInUserIDs *[]int64) (*GitLab, error) {
+func NewGitLabClient(host string, token string, optedInUserIDs *[]int64, postAsInternalNote *bool) (*GitLab, error) {
 	client, err := gitlab.NewClient(token, gitlab.WithBaseURL(fmt.Sprintf("https://%s/api/v4", host)))
 	if err != nil {
 		return nil, err
 	}
 
+	// Default to externally-visible notes when unset. This changes the
+	// previous hardcoded behavior (always internal); per maintainer
+	// feedback on #7, config compatibility can still break at this stage
+	// of the project, and internal notes are the special case.
+	resolvedPostAsInternalNote := false
+	if postAsInternalNote != nil {
+		resolvedPostAsInternalNote = *postAsInternalNote
+	}
+
 	return &GitLab{
-		client:         client,
-		optedInUserIDs: optedInUserIDs,
+		client:             client,
+		optedInUserIDs:     optedInUserIDs,
+		postAsInternalNote: resolvedPostAsInternalNote,
 	}, nil
 }
 
@@ -119,10 +136,10 @@ func (c *GitLab) CreateOrUpdateReviewComment(projectID int64, changeID int64, co
 			Body: &comment,
 		})
 	} else {
-		t := true
+		internal := c.postAsInternalNote
 		_, _, err = c.client.Notes.CreateMergeRequestNote(projectID, changeID, &gitlab.CreateMergeRequestNoteOptions{
 			Body:     &comment,
-			Internal: &t,
+			Internal: &internal,
 		})
 	}
 
