@@ -34,7 +34,7 @@ func GetForge(fc *config.ForgeConfig) (Forge, error) {
 			gitlabConfig.Host,
 			gitlabConfig.AccessToken,
 			gitlabConfig.OptedInUserIDs,
-			gitlabConfig.InternalNotes,
+			gitlabConfig.PostAsInternalNote,
 		)
 	default:
 		return nil, fmt.Errorf("unknown forge client '%s'", fc.Client)
