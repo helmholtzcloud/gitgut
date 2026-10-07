@@ -264,7 +264,10 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 		cachedTokens)
 
 	numberPrinter := message.NewPrinter(message.MatchLanguage("en"))
-	output += fmt.Sprintf("\n\n---\n\nToken Usage: Input %s / Output %s / Thinking %s / Cached %s\n", numberPrinter.Sprintf("%d", inputTokens), numberPrinter.Sprintf("%d", outputTokens), numberPrinter.Sprintf("%d", thinkingTokens), numberPrinter.Sprintf("%d", cachedTokens))
+
+	if inputTokens > 0 {
+		output += fmt.Sprintf("\n\n---\n\nToken Usage: Input %s / Output %s / Thinking %s / Cached %s (%.2f%% Hit Rate)\n", numberPrinter.Sprintf("%d", inputTokens), numberPrinter.Sprintf("%d", outputTokens), numberPrinter.Sprintf("%d", thinkingTokens), numberPrinter.Sprintf("%d", cachedTokens), (float64(cachedTokens) / (float64(cachedTokens) + float64(inputTokens)) * 100))
+	}
 
 	if dryRun {
 		slog.Info("Dry run result (no comment update posted)", "review", output)
