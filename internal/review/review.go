@@ -23,9 +23,6 @@ import (
 	"google.golang.org/genai"
 )
 
-// Hardcoded 10M token limit for now
-const GLOBAL_INPUT_TOKEN_LIMIT = 10_000_000
-
 func RunReview(projectID int64, changeID int64, dryRun bool) error {
 	slog.SetLogLoggerLevel(slog.LevelDebug)
 
@@ -217,11 +214,11 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 
 		if event.UsageMetadata != nil {
 			cachedTokens += uint64(event.UsageMetadata.CachedContentTokenCount)
-			inputTokens += uint64(event.UsageMetadata.PromptTokenCount)
+			inputTokens += uint64(event.UsageMetadata.PromptTokenCount) - uint64(event.UsageMetadata.CachedContentTokenCount)
 			thinkingTokens += uint64(event.UsageMetadata.ThoughtsTokenCount)
 			outputTokens += uint64(event.UsageMetadata.CandidatesTokenCount) - uint64(event.UsageMetadata.ThoughtsTokenCount)
 
-			if inputTokens > GLOBAL_INPUT_TOKEN_LIMIT {
+			if inputTokens > config.Review.UncachedInputTokenLimit {
 				slog.Error("Global input token limit reached", "inputTokens",
 					inputTokens,
 					"outputTokens",
@@ -267,7 +264,10 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 		cachedTokens)
 
 	numberPrinter := message.NewPrinter(message.MatchLanguage("en"))
-	output += fmt.Sprintf("\n\n---\n\nToken Usage: Input %s / Output %s / Thinking %s / Cached %s\n", numberPrinter.Sprintf("%d", inputTokens), numberPrinter.Sprintf("%d", outputTokens), numberPrinter.Sprintf("%d", thinkingTokens), numberPrinter.Sprintf("%d", cachedTokens))
+
+	if inputTokens > 0 {
+		output += fmt.Sprintf("\n\n---\n\nToken Usage: Input %s / Output %s / Thinking %s / Cached %s (%.2f%% Hit Rate)\n", numberPrinter.Sprintf("%d", inputTokens), numberPrinter.Sprintf("%d", outputTokens), numberPrinter.Sprintf("%d", thinkingTokens), numberPrinter.Sprintf("%d", cachedTokens), (float64(cachedTokens) / (float64(cachedTokens) + float64(inputTokens)) * 100))
+	}
 
 	if dryRun {
 		slog.Info("Dry run result (no comment update posted)", "review", output)
