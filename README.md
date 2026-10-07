@@ -244,7 +244,9 @@ Filter the list of findings for findings which can be proven to exist in the cod
 
 ##### generate_comment
 
-Concatenate the AI notice, a generate a summary and the findings from `input_from`. This is going to be posted as the review comment.
+Concatenate the AI notice, a summary and the findings from `input_from`. This is going to be posted as the review comment.
+
+The AI notice's contents can be extended using the `llm_note_suffix` parameter. However, the prefix is fixed to clearly mark the comment as LLM-generated.
 
 ```json
 "generate_comment": {
@@ -252,6 +254,7 @@ Concatenate the AI notice, a generate a summary and the findings from `input_fro
     "input_from": [
         "verify"
     ],
+    "llm_note_suffix": "> Findings may be inaccurate or based on inaccurate and/or incomplete information. These are just suggestions, there's no obligation to consider them, so feel free to ignore (e.g. if there's no time to check their accuracy).",
     "summary_model": "model",
     "summary_prompt": "Provide the developer with a short summary of your code review's results (about 1 paragraph max, can be shorter) without listing each individual item, so the developer working on the change knows where to start. Also state whether you think the changes risk breaking major things when merging."
 }
@@ -340,6 +343,7 @@ This is an example workflow which aims to provide general findings on the code.
                 "input_from": [
                     "deduplicate"
                 ],
+                "llm_note_suffix": "> This bot is opt-in only and part of an experimental effort to see where LLMs can support our workflow. Findings may be inaccurate or based on inaccurate and/or incomplete information. These are just suggestions, there's no obligation to consider them, so feel free to ignore (e.g. if there's no time to check their accuracy).",
                 "summary_model": "model_thinking",
                 "summary_prompt": "Provide the developer with a short summary of your code review's results (about 1 paragraph max, can be shorter) without listing each individual item, so the developer working on the change knows where to start. Also state whether you think the changes risk breaking major things when merging."
             }
@@ -449,6 +453,7 @@ Please be aware this may use a few million tokens per review if your provider do
                 "input_from": [
                     "verify"
                 ],
+                "llm_note_suffix": "> This bot is opt-in only and part of an experimental effort to see where LLMs can support our workflow. Findings may be inaccurate or based on inaccurate and/or incomplete information. These are just suggestions, there's no obligation to consider them, so feel free to ignore (e.g. if there's no time to check their accuracy).",
                 "summary_model": "model_thinking",
                 "summary_prompt": "Provide the developer with a short summary of your code review's results (about 1 paragraph max, can be shorter) without listing each individual item, so the developer working on the change knows where to start. Also state whether you think the changes risk breaking major things when merging."
             }

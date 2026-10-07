@@ -11,9 +11,10 @@ import (
 
 const NOTES_FROM_VERIFICATION_PREFIX = "*Notes from verification:* "
 
-const AI_NOTE = "> [!note] This comment is AI generated.\n> This bot is opt-in only and part of an experimental effort to see where LLMs can support our workflow. Findings may be inaccurate or based on inaccurate and/or incomplete information. These are just suggestions, there's no obligation to consider them, so feel free to ignore (e.g. if there's no time to check their accuracy).\n\n---\n\n"
+const LLM_NOTE = "> [!note] This comment is AI generated.\n"
 
 type GenerateCommentActionConfig struct {
+	LLMNoteSuffix string `mapstructure:"llm_note_suffix"`
 	SummaryModel  string `mapstructure:"summary_model"`
 	SummaryPrompt string `mapstructure:"summary_prompt"`
 }
@@ -111,7 +112,7 @@ func (c *GenerateComment) GetSubgraph() (*Subgraph, error) {
 		DependsOn: &[]string{joinInnerNodeName},
 		Node: workflow.NewFunctionNode(c.Name,
 			func(_ agent.Context, inputs map[string]string) (string, error) {
-				output := AI_NOTE + inputs[summaryNodeName]
+				output := LLM_NOTE + c.Config.LLMNoteSuffix + "\n\n---\n\n" + inputs[summaryNodeName]
 
 				if len(inputs[markdownNodeName]) > 0 {
 					output += "\n\n---\n" + inputs[markdownNodeName] + "\n"
