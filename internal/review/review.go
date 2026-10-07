@@ -23,9 +23,6 @@ import (
 	"google.golang.org/genai"
 )
 
-// Hardcoded 10M token limit for now
-const GLOBAL_INPUT_TOKEN_LIMIT = 10_000_000
-
 func RunReview(projectID int64, changeID int64, dryRun bool) error {
 	slog.SetLogLoggerLevel(slog.LevelDebug)
 
@@ -217,11 +214,11 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 
 		if event.UsageMetadata != nil {
 			cachedTokens += uint64(event.UsageMetadata.CachedContentTokenCount)
-			inputTokens += uint64(event.UsageMetadata.PromptTokenCount)
+			inputTokens += uint64(event.UsageMetadata.PromptTokenCount) - uint64(event.UsageMetadata.CachedContentTokenCount)
 			thinkingTokens += uint64(event.UsageMetadata.ThoughtsTokenCount)
 			outputTokens += uint64(event.UsageMetadata.CandidatesTokenCount) - uint64(event.UsageMetadata.ThoughtsTokenCount)
 
-			if inputTokens > GLOBAL_INPUT_TOKEN_LIMIT {
+			if inputTokens > config.Review.UncachedInputTokenLimit {
 				slog.Error("Global input token limit reached", "inputTokens",
 					inputTokens,
 					"outputTokens",

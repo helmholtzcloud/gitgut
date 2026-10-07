@@ -34,7 +34,6 @@ Use the `help` command to learn about more options.
 - In case you use the 'agentic' validation action block:
     - Repos with a lot of files which fill the context with the file tree alone
     - Sometimes agentic verification gets stuck in a loop (depends on model, prompt etc.) leading to excessive token consumption
-- There is a hardcoded limit of 10 million input tokens per run (measured after a node finishes, so the actual number may be higher). This is a stopgap for runaway jobs and will be customizable in the future.
 - There is a default timeout on many actions to prevent stuck tasks.
 
 ## Building your own Workflow
@@ -139,6 +138,7 @@ The general workflow settings look like this:
 "guideline_paths": [
     "README.md"
 ],
+"uncached_input_token_limit": 3000000,
 ```
 
 #### system_prompt
@@ -148,6 +148,13 @@ The prompt for setting the writing style of the review text.
 #### guideline_paths
 
 Paths to files which are going to be auto-included in the review context.
+
+#### uncached_input_token_limit
+
+Input token limit (ucached = overall input tokens - cached tokens) after which a workflow is stopped.
+
+*Note: This is not a continuously enforced limit as token usage is reported by ADK after a workflow node finishes so you might end up with more usage in case of a runaway node.*
+
 
 ### Workflow Action Blocks
 
@@ -319,6 +326,7 @@ This is an example workflow which aims to provide general findings on the code.
         "guideline_paths": [
             "README.md"
         ],
+        "uncached_input_token_limit": 1000000,
         "workflow": {
             "extract": {
                 "action": "extract_findings_from_comment",
@@ -410,6 +418,7 @@ Please be aware this may use a few million tokens per review if your provider do
         "guideline_paths": [
             "README.md"
         ],
+        "uncached_input_token_limit": 3000000,
         "workflow": {
             "extract": {
                 "action": "extract_findings_from_comment",

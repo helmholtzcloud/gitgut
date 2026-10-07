@@ -30,9 +30,10 @@ type ModelConfig struct {
 type WorkflowConfig map[string]ActionConfig
 
 type ReviewConfig struct {
-	SystemPrompt   string         `mapstructure:"system_prompt"`
-	GuidelinePaths []string       `mapstructure:"guideline_paths"`
-	Workflow       WorkflowConfig `mapstructure:"workflow"`
+	SystemPrompt            string         `mapstructure:"system_prompt"`
+	GuidelinePaths          []string       `mapstructure:"guideline_paths"`
+	UncachedInputTokenLimit uint64         `mapstructure:"uncached_input_token_limit"`
+	Workflow                WorkflowConfig `mapstructure:"workflow"`
 }
 
 type ActionConfig struct {
