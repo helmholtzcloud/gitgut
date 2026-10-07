@@ -74,6 +74,10 @@ This is the configuration reference of `gitgut.json`, check below for a full exa
 
 ### General
 
+#### Logging
+
+The default log level is `INFO` and can be set using the `LOG_LEVEL` environment variable. Available levels: `DEBUG`, `INFO`, `WARN` and `ERROR`.
+
 #### Forge Config
 
 ##### GitLab

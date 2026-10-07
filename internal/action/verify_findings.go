@@ -71,10 +71,10 @@ func (v *VerifyFindings) GetSubgraph() (*Subgraph, error) {
 		func(ctx agent.Context, reviewResult ReviewResult, _ func(*session.Event) error) (VerifiedReviewResult, error) {
 			verifiedFindings := VerifiedReviewResult{FindingsList: make([]VerifiedFinding, 0)}
 
-			slog.Debug("Verifying findings", "unverified_count", len(reviewResult.FindingsList))
+			slog.Info("Verifying findings", "unverified_count", len(reviewResult.FindingsList))
 
 			for i, finding := range reviewResult.FindingsList {
-				slog.Debug("Starting verification")
+				slog.Info("Starting verification")
 
 				instruction := fmt.Sprintf("%s\n\n # Review Finding\n\n ## %s\n\n %s\n\n---\n\n # Your Task\n\n %s\n You may read files from the File Tree section using the read_file tool. DO NOT attempt re-read files listed under Current File Contents, you already have the contents in your context, there is no point in reading them again.\n\nOnce you're done, you MUST your verdict using the submit_result tool.\n\n", reviewContext, finding.Summary, finding.Description, v.Config.Prompt)
 
@@ -88,7 +88,7 @@ func (v *VerifyFindings) GetSubgraph() (*Subgraph, error) {
 						slog.Warn("Agent attempted to re-read file.", "path", input.Path)
 						return readFileResults{}, fmt.Errorf("you already read this file. Look it up in your context. Do not attempt to read it again using the read_file tool")
 					} else if contents, ok := v.WorkflowContext.RepoTree[input.Path]; ok {
-						slog.Debug("Agent reads file", "path", input.Path)
+						slog.Info("Agent reads file", "path", input.Path)
 						readFiles[input.Path] = struct{}{}
 
 						return readFileResults{Contents: contents}, nil
@@ -162,18 +162,18 @@ func (v *VerifyFindings) GetSubgraph() (*Subgraph, error) {
 				}
 
 				if verificationResult.IsValid {
-					slog.Debug("Finding passed verification")
+					slog.Info("Finding passed verification")
 
 					verifiedFindings.FindingsList = append(verifiedFindings.FindingsList, VerifiedFinding{
 						NotesFromVerification: verificationResult.VerificationSummary,
 						Finding:               finding,
 					})
 				} else {
-					slog.Debug("Finding did not pass verification")
+					slog.Info("Finding did not pass verification")
 				}
 			}
 
-			slog.Debug("Verification done", "verified_count", len(verifiedFindings.FindingsList))
+			slog.Info("Verification done", "verified_count", len(verifiedFindings.FindingsList))
 
 			return verifiedFindings, nil
 		},
