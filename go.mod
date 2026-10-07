@@ -3,8 +3,8 @@ module github.com/helmholtzcloud/gitgut
 go 1.27.1
 
 require (
-	github.com/achetronic/adk-utils-go v1.1.0
 	github.com/go-viper/mapstructure/v2 v2.5.0
+	github.com/openai/openai-go/v3 v3.73.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	gitlab.com/gitlab-org/api/client-go/v3 v3.16.0
@@ -35,7 +35,6 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/openai/openai-go/v3 v3.73.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect

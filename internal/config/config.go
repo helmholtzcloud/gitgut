@@ -2,12 +2,14 @@ package config
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 
-	"github.com/achetronic/adk-utils-go/genai/openai/completions"
+	"github.com/openai/openai-go/v3/option"
 	"github.com/spf13/viper"
 	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/openaimodel"
 )
 
 type ForgeConfig struct {
@@ -80,15 +82,33 @@ func LoadConfig() (*Config, error) {
 }
 
 func (c *Config) GetModel(name string) (model.LLM, error) {
-	model, ok := c.Models[name]
+	modelConfig, ok := c.Models[name]
 	if !ok {
 		return nil, fmt.Errorf("model '%s' does not exist in config", name)
 	}
 
-	return completions.New(completions.Config{
-		APIKey:    c.Providers[model.Provider].Key,
-		BaseURL:   c.Providers[model.Provider].URL,
-		ModelName: model.Name,
-		ExtraBody: model.AdditionalParams,
-	}), nil
+	requestOptions := make([]option.RequestOption, 0)
+
+	for key, value := range modelConfig.AdditionalParams {
+		requestOptions = append(requestOptions, option.WithJSONSet(
+			key,
+			value,
+		))
+	}
+
+	model, err := openaimodel.NewModel(
+		context.Background(),
+		modelConfig.Name,
+		&openaimodel.ClientConfig{
+			API:     openaimodel.APIChatCompletions,
+			APIKey:  c.Providers[modelConfig.Provider].Key,
+			BaseURL: c.Providers[modelConfig.Provider].URL,
+			Options: requestOptions,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return model, nil
 }
