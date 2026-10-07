@@ -151,7 +151,7 @@ Paths to files which are going to be auto-included in the review context.
 
 #### uncached_input_token_limit
 
-Input token limit (ucached = overall input tokens - cached tokens) after which a workflow is stopped.
+Input token limit (uncached = overall input tokens - cached tokens) after which a workflow is stopped.
 
 *Note: This is not a continuously enforced limit as token usage is reported by ADK after a workflow node finishes so you might end up with more usage in case of a runaway node.*
 
