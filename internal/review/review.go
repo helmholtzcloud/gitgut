@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"os"
 	"strings"
 	"unicode/utf8"
 
@@ -24,7 +25,18 @@ import (
 )
 
 func RunReview(projectID int64, changeID int64, dryRun bool) error {
-	slog.SetLogLoggerLevel(slog.LevelDebug)
+	// Set the log level to what is set in the 'LOG_LEVEL' envvar, default to INFO
+	var logLevel slog.Level
+	logLevelFromEnv := os.Getenv("LOG_LEVEL")
+
+	if logLevelFromEnv == "" {
+		logLevelFromEnv = "INFO"
+	}
+	err := logLevel.UnmarshalText([]byte(logLevelFromEnv))
+	if err != nil {
+		return err
+	}
+	slog.SetLogLoggerLevel(logLevel)
 
 	config, err := config.LoadConfig()
 	if err != nil {
@@ -36,7 +48,7 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 		return err
 	}
 
-	slog.Debug("Loading change metadata...")
+	slog.Info("Loading change metadata...")
 	metadata, err := forgeClient.GetChangeMetadata(projectID, changeID)
 	if err != nil {
 		return err
@@ -46,7 +58,7 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 		return errors.New("the change is not eligible for review (e.g. the author did not opt into reviews)")
 	}
 
-	slog.Debug("Checking for existing comment...")
+	slog.Info("Checking for existing comment...")
 	currentComment, err := forgeClient.TryGetReviewComment(projectID, changeID)
 	if err != nil {
 		return err
@@ -54,19 +66,19 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 
 	if !metadata.IsActive && !dryRun {
 		if currentComment != nil {
-			slog.Debug("Change is not active, deleting stale review...")
+			slog.Info("Change is not active, deleting stale review...")
 			err = forgeClient.DeleteReviewComment(projectID, changeID)
 			if err != nil {
 				return err
 			}
 		} else {
-			slog.Debug("Change is not active and there is no old comment, nothing to do here.")
+			slog.Info("Change is not active and there is no old comment, nothing to do here.")
 		}
 	}
 
 	repoTree := make(map[string]string)
 
-	slog.Debug("Downloading diff...")
+	slog.Info("Downloading diff...")
 	diff, err := forgeClient.GetRawDiffForChange(projectID, changeID)
 	if err != nil {
 		return err
@@ -80,13 +92,13 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 		}
 	}
 
-	slog.Debug("Downloading code...")
+	slog.Info("Downloading code...")
 	codeArchive, err := forgeClient.GetArchiveForTargetRef(projectID, changeID)
 	if err != nil {
 		return err
 	}
 
-	slog.Debug("Extracting code...")
+	slog.Info("Extracting code...")
 	gzipReader, err := gzip.NewReader(bytes.NewReader(codeArchive))
 	if err != nil {
 		return err
@@ -184,7 +196,7 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 		return err
 	}
 
-	slog.Debug("Runnning review workflow...")
+	slog.Info("Runnning review workflow...")
 	events := workflowRunner.Run(
 		context.Background(),
 		fmt.Sprint(projectID),
@@ -234,7 +246,7 @@ func RunReview(projectID int64, changeID int64, dryRun bool) error {
 		}
 
 		if !event.Partial && event.IsFinalResponse() {
-			slog.Debug("Workflow node finished",
+			slog.Info("Workflow node finished",
 				"node",
 				event.NodeInfo.Path,
 				"inputTokens",

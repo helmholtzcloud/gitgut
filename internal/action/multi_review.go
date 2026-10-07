@@ -54,12 +54,12 @@ func (m *MultiReview) GetSubgraph() (*Subgraph, error) {
 		func(ctx agent.Context, _input string, _ func(*session.Event) error) (ReviewResult, error) {
 			overallResult := ReviewResult{FindingsList: make([]Finding, 0)}
 
-			slog.Debug("Starting multi-review", "workflow_action", m.Name)
+			slog.Info("Starting multi-review", "workflow_action", m.Name)
 
 			for i := 0; i < int(m.Config.Reviews); i++ {
 				nodeName := fmt.Sprintf("gitgut/%s/review_%d", m.Name, i)
 
-				slog.Debug("Starting review", "node", nodeName, "review", i+1, "of", m.Config.Reviews)
+				slog.Info("Starting review", "node", nodeName, "review", i+1, "of", m.Config.Reviews)
 
 				result := ReviewResult{}
 				model, err := m.WorkflowContext.Config.GetModel(m.Config.ReviewModel)
@@ -101,12 +101,12 @@ func (m *MultiReview) GetSubgraph() (*Subgraph, error) {
 					return result, err
 				}
 
-				slog.Debug("Finished review", "node", nodeName, "review", i+1, "of", m.Config.Reviews, "findings", len(result.FindingsList))
+				slog.Info("Finished review", "node", nodeName, "review", i+1, "of", m.Config.Reviews, "findings", len(result.FindingsList))
 
 				overallResult.FindingsList = append(overallResult.FindingsList, result.FindingsList...)
 			}
 
-			slog.Debug("Finished multi-review", "workflow_action", m.Name, "findings", len(overallResult.FindingsList))
+			slog.Info("Finished multi-review", "workflow_action", m.Name, "findings", len(overallResult.FindingsList))
 
 			return overallResult, nil
 		},
