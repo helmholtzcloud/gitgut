@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/go-viper/mapstructure/v2 v2.5.0
-	github.com/openai/openai-go/v3 v3.79.0
+	github.com/openai/openai-go/v3 v3.81.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	gitlab.com/gitlab-org/api/client-go/v3 v3.27.0
