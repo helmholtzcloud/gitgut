@@ -9,7 +9,7 @@ require (
 	github.com/spf13/viper v1.21.0
 	gitlab.com/gitlab-org/api/client-go/v3 v3.40.2
 	golang.org/x/text v0.43.0
-	google.golang.org/adk/v2 v2.6.0
+	google.golang.org/adk/v2 v2.7.0
 	google.golang.org/genai v1.77.0
 )
 
