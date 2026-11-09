@@ -9,13 +9,13 @@ require (
 	github.com/spf13/viper v1.21.0
 	gitlab.com/gitlab-org/api/client-go/v3 v3.42.0
 	golang.org/x/text v0.43.0
-	google.golang.org/adk/v2 v2.7.0
+	google.golang.org/adk/v2 v2.7.1
 	google.golang.org/genai v1.77.0
 )
 
 require (
 	cloud.google.com/go v0.123.0 // indirect
-	cloud.google.com/go/auth v0.24.2 // indirect
+	cloud.google.com/go/auth v0.24.3 // indirect
 	cloud.google.com/go/compute/metadata v0.10.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coder/websocket v1.8.15 // indirect
