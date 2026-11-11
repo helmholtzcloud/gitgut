@@ -7,7 +7,7 @@ require (
 	github.com/openai/openai-go/v3 v3.96.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
-	gitlab.com/gitlab-org/api/client-go/v3 v3.42.0
+	gitlab.com/gitlab-org/api/client-go/v3 v3.44.0
 	golang.org/x/text v0.43.0
 	google.golang.org/adk/v2 v2.7.1
 	google.golang.org/genai v1.77.0
