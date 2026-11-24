@@ -10,7 +10,7 @@ require (
 	gitlab.com/gitlab-org/api/client-go/v3 v3.54.1
 	golang.org/x/text v0.44.0
 	google.golang.org/adk/v2 v2.7.1
-	google.golang.org/genai v1.77.0
+	google.golang.org/genai v1.79.1
 )
 
 require (
